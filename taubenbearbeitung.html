@@ -1,0 +1,370 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Taube bearbeiten</title>
+
+  <style>
+    :root{
+      --blue:#1f6fa6;
+      --blue-dark:#155a89;
+      --bg:#f6f9fe;
+      --card:#ffffff;
+      --text:#0f172a;
+      --muted:#5b6778;
+      --line:#d9e2ec;
+      --focus: rgba(31,111,166,.18);
+      --ok:#0a7a0a;
+      --err:#b00020;
+    }
+
+    *{ box-sizing:border-box; }
+    body{
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 28px 14px 56px;
+    }
+
+    /* Kopfbereich mit Logo */
+    .site-header{
+      display:flex;
+      gap:16px;
+      align-items:center;
+      margin: 6px 0 18px;
+    }
+    .logo{
+      width: 120px;
+      height: auto;
+      display:block;
+    }
+    .brand{
+      line-height: 1.1;
+    }
+    .brand .kicker{
+      color: var(--blue);
+      font-weight: 700;
+      letter-spacing: .2px;
+      font-size: 18px;
+      margin:0 0 4px;
+    }
+    h1{
+      margin:0;
+      font-size: 30px;
+      color: var(--blue-dark);
+      letter-spacing:.2px;
+    }
+    .hint{
+      margin: 10px 0 18px;
+      color: var(--muted);
+    }
+
+    /* Karte */
+    .card{
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 18px;
+      box-shadow: 0 10px 24px rgba(15, 23, 42, .06);
+    }
+
+    label{
+      display:block;
+      margin: 14px 0 7px;
+      font-weight: 650;
+      color: #223046;
+    }
+
+    input, select, textarea, button{
+      width:100%;
+      padding: 11px 12px;
+      font-size: 16px;
+      border-radius: 10px;
+    }
+
+    input, select, textarea{
+      border: 1px solid var(--line);
+      background: #fff;
+      outline: none;
+      transition: border-color .15s ease, box-shadow .15s ease;
+    }
+    input:focus, select:focus, textarea:focus{
+      border-color: var(--blue);
+      box-shadow: 0 0 0 4px var(--focus);
+    }
+    textarea{ min-height: 90px; resize: vertical; }
+
+    .actions{
+      display:flex;
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    button{
+      border: 1px solid transparent;
+      cursor:pointer;
+      font-weight: 700;
+      transition: transform .04s ease, filter .15s ease, background .15s ease;
+    }
+    button:active{ transform: translateY(1px); }
+
+    /* Primär / Sekundär Buttons (gleich wie bei Neue Taube melden) */
+    #btnSpeichern{
+      background: var(--card);
+      border-color: var(--line);
+      color: var(--blue-dark);
+    }
+    #btnSpeichern:hover{
+      filter: brightness(0.97);
+    }
+
+    #btnNeu{
+      background: var(--card);
+      border-color: var(--line);
+      color: var(--blue-dark);
+    }
+    #btnNeu:hover{
+      filter: brightness(0.97);
+    }
+
+    button:disabled{
+      opacity:.65;
+      cursor:not-allowed;
+    }
+
+    /* Unterstreich-Animation für Buttons */
+    .button-underline{
+      position: relative;
+      overflow: hidden;
+    }
+    .button-underline::after{
+      content: "";
+      position: absolute;
+      left: 50%;
+      bottom: 8px;
+      width: 0;
+      height: 2px;
+      background-color: var(--blue-dark);
+      transform: translateX(-50%);
+      transition: width 0.25s ease-out;
+    }
+    .button-underline:hover::after,
+    .button-underline:focus-visible::after{
+      width: 80%;
+    }
+
+    .box{
+      margin-top: 14px;
+      padding: 12px 14px;
+      border-radius: 12px;
+      border: 1px dashed var(--line);
+      background: #fbfdff;
+    }
+    .small{ font-size: 14px; color: var(--muted); }
+    .ok{ color: var(--ok); font-weight: 650; }
+    .err{ color: var(--err); font-weight: 650; }
+
+    .checkline{
+      display:flex;
+      gap: 10px;
+      align-items: center;
+    }
+    .checkline input{ width:auto; }
+
+    .field-error{
+      border: 2px solid var(--err) !important;
+      box-shadow: 0 0 0 4px rgba(176,0,32,.12) !important;
+      outline: none;
+    }
+
+    /* Mobile: Buttons untereinander */
+    @media (max-width: 560px){
+      .site-header{ align-items:flex-start; }
+      .logo{ width: 96px; }
+      h1{ font-size: 26px; }
+      .actions{ flex-direction: column; }
+    }
+  </style>
+</head>
+
+<body>
+<header class="site-header">
+  <!-- Logo-Dateiname ggf. anpassen -->
+  <img class="logo" src="logo_trans.png" alt="Stadttauben-Initiative Dresden e. V." />
+  <div class="brand">
+    <p class="kicker">Stadttauben-Initiative Dresden e. V.</p>
+    <h1>Taube bearbeiten</h1>
+  </div>
+</header>
+
+<p class="hint">Taube auswählen, Pflegestelle optional ändern, optional „nicht mehr in Pflege“ markieren.</p>
+
+<div class="card">
+  <form id="bearbeiten-form">
+    <label for="tauben_id">Tauben (aktuell in Pflege)</label>
+    <select id="tauben_id" name="tauben_id" required>
+      <option value="" disabled selected>Bitte wählen …</option>
+    </select>
+
+    <label for="pflegestelle">Neue Pflegestelle (Vor- und Nachname)</label>
+    <input id="pflegestelle" name="pflegestelle" type="text" autocomplete="off"
+           placeholder="Leer lassen = Pflegestelle bleibt unverändert" />
+
+    <label>Pflegestatus</label>
+    <div class="checkline">
+      <input type="checkbox" id="nicht_mehr_in_pflege" />
+      <label for="nicht_mehr_in_pflege" style="margin:0;font-weight:500;">
+        Taube ist nicht mehr in Pflege
+      </label>
+    </div>
+
+    <div class="actions">
+      <button id="btnSpeichern" type="submit" class="button-underline">Speichern</button>
+      <button id="btnNeu" type="button" class="button-underline">Zurücksetzen</button>
+    </div>
+  </form>
+
+  <div class="box">
+    <div id="meldung" class="small">Bereit.</div>
+  </div>
+</div>
+
+<script>
+  // =========================
+  // URLS EINTRAGEN
+  // =========================
+  const TAUBEN_LIST_URL = "http://n8n-js48c8w4444s8k4owks8kwkk.88.198.140.127.sslip.io/webhook/taubenliste";
+  const UPDATE_URL      = "http://n8n-js48c8w4444s8k4owks8kwkk.88.198.140.127.sslip.io/webhook/Taubenbearbeitung";
+
+  // =========================
+  // UI-Helfer
+  // =========================
+  const meldungEl = document.getElementById("meldung");
+
+  function setMeldung(text, typ) {
+    meldungEl.className = "small " + (typ === "ok" ? "ok" : typ === "err" ? "err" : "");
+    meldungEl.textContent = text;
+  }
+
+  function clearFieldErrors() {
+    document.getElementById("tauben_id").classList.remove("field-error");
+    document.getElementById("pflegestelle").classList.remove("field-error");
+  }
+
+  function markFieldError(fieldName) {
+    clearFieldErrors();
+    const el = document.getElementById(fieldName);
+    if (el) el.classList.add("field-error");
+  }
+
+  document.getElementById("tauben_id").addEventListener("change", clearFieldErrors);
+  document.getElementById("pflegestelle").addEventListener("input", clearFieldErrors);
+
+  // =========================
+  // Tauben-Dropdown laden
+  // =========================
+  async function ladeTaubenDropdown() {
+    const select = document.getElementById("tauben_id");
+    select.innerHTML = '<option value="" disabled selected>Bitte wählen …</option>';
+
+    const res = await fetch(TAUBEN_LIST_URL, { method: "GET" });
+    if (!res.ok) throw new Error("Taubenliste nicht erreichbar (HTTP " + res.status + ").");
+
+    const daten = await res.json();
+    if (!Array.isArray(daten)) throw new Error("Taubenliste hat unerwartetes Format (kein Array).");
+
+    daten.forEach(item => {
+      if (!item) return;
+      const value = item.id ?? item.ID;
+      const label = item.label ?? item.Label ?? value;
+      if (!value) return;
+
+      const opt = document.createElement("option");
+      opt.value = String(value);
+      opt.textContent = String(label);
+      select.appendChild(opt);
+    });
+
+    if (select.options.length <= 1) throw new Error("Taubenliste ist leer.");
+  }
+
+  document.addEventListener("DOMContentLoaded", () => {
+    setMeldung("Lade Taubenliste …", "");
+    ladeTaubenDropdown()
+      .then(() => setMeldung("Bereit.", "ok"))
+      .catch(err => setMeldung(err.message, "err"));
+  });
+
+  // =========================
+  // Submit (POST) + Fehler anzeigen
+  // =========================
+  document.getElementById("bearbeiten-form").addEventListener("submit", async (event) => {
+    event.preventDefault();
+    clearFieldErrors();
+
+    const btn = document.getElementById("btnSpeichern");
+    btn.disabled = true;
+
+    try {
+      const tauben_id = (document.getElementById("tauben_id").value || "").trim();
+      const pflegestelle = (document.getElementById("pflegestelle").value || "").trim().replace(/\s+/g, " ");
+      const nichtMehr = document.getElementById("nicht_mehr_in_pflege").checked;
+
+      const aktiv = nichtMehr ? "false" : "true";
+
+      const payload = { tauben_id, aktiv };
+      if (pflegestelle.length > 0) payload.pflegestelle = pflegestelle;
+
+      setMeldung("Sende …", "");
+
+      const res = await fetch(UPDATE_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+
+      let data = null;
+      try {
+        data = await res.json();
+      } catch (e) {
+        const t = await res.text().catch(() => "");
+        setMeldung("Fehler: Antwort ist kein JSON. " + (t ? ("Antwort: " + t) : ("HTTP " + res.status)), "err");
+        btn.disabled = false;
+        return;
+      }
+
+      if (data && data.ok === false) {
+        if (data.errorField) markFieldError(data.errorField);
+        setMeldung(data.errorMessage || "Eingabe ungültig.", "err");
+        btn.disabled = false;
+        return;
+      }
+
+      if (!res.ok) {
+        setMeldung("Fehler (HTTP " + res.status + ").", "err");
+        btn.disabled = false;
+        return;
+      }
+
+      setMeldung("Gespeichert.", "ok");
+
+    } catch (err) {
+      setMeldung("Fehler: " + err.message, "err");
+    } finally {
+      btn.disabled = false;
+    }
+  });
+
+  document.getElementById("btnNeu").addEventListener("click", () => {
+    clearFieldErrors();
+    document.getElementById("pflegestelle").value = "";
+    document.getElementById("nicht_mehr_in_pflege").checked = false;
+    setMeldung("Zurückgesetzt.", "");
+  });
+</script>
+
+</body>
+</html>

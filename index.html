@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Vereins-Tools – Stadttauben Dresden</title>
+  <style>
+    body{
+      font-family: system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
+      background:#f6f9fe;
+      color:#0f172a;
+      max-width:980px;
+      margin:0 auto;
+      padding:28px 14px 56px;
+    }
+    .site-header{display:flex;gap:16px;align-items:center;margin:6px 0 18px;}
+    .logo{width:120px;height:auto;display:block;}
+    h1{margin:0;font-size:30px;color:#155a89;}
+    .kicker{color:#1f6fa6;font-weight:700;margin:0 0 4px;}
+    .card{background:#fff;border:1px solid #d9e2ec;border-radius:14px;
+          padding:18px;box-shadow:0 10px 24px rgba(15,23,42,.06);}
+    ul{list-style:none;padding:0;margin:0;}
+    li + li{margin-top:10px;}
+    a{
+      display:inline-block;
+      padding:10px 14px;
+      border-radius:10px;
+      background:#ffffff;
+      border:1px solid #d9e2ec;
+      color:#155a89;
+      font-weight:600;
+      text-decoration:none;
+      position:relative;
+      overflow:hidden;
+    }
+    a::after{
+      content:"";
+      position:absolute;
+      left:50%;
+      bottom:7px;
+      width:0;
+      height:2px;
+      background:#155a89;
+      transform:translateX(-50%);
+      transition:width .25s ease-out;
+    }
+    a:hover::after{width:80%;}
+  </style>
+</head>
+<body>
+<header class="site-header">
+  <img class="logo" src="logo_transparent.png" alt="Stadttauben-Initiative Dresden e. V.">
+  <div>
+    <p class="kicker">Stadttauben-Initiative Dresden e. V.</p>
+    <h1>Interne Tools</h1>
+  </div>
+</header>
+
+<div class="card">
+  <ul>
+    <li><a href="/taubenmeldung.html">Neue Taube melden</a></li>
+    <li><a href="/taubenbearbeitung.html">Taube bearbeiten</a></li>
+    <!-- hier später weitere Tools ergänzen -->
+  </ul>
+</div>
+</body>
+</html>

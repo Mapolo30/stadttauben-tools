@@ -1,0 +1,327 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Neue Taube melden</title>
+
+<style>
+  :root{
+    --blue:#1f6fa6;
+    --blue-dark:#155a89;
+    --bg:#f6f9fe;
+    --card:#ffffff;
+    --text:#0f172a;
+    --muted:#5b6778;
+    --line:#d9e2ec;
+    --focus: rgba(31,111,166,.18);
+    --ok:#0a7a0a;
+    --err:#b00020;
+  }
+
+  *{ box-sizing:border-box; }
+  body{
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    max-width: 980px;
+    margin: 0 auto;
+    padding: 28px 14px 56px;
+  }
+
+  /* Kopfbereich mit Logo */
+  .site-header{
+    display:flex;
+    gap:16px;
+    align-items:center;
+    margin: 6px 0 18px;
+  }
+  .logo{
+    width: 120px;
+    height: auto;
+    display:block;
+  }
+  .brand{
+    line-height: 1.1;
+  }
+  .brand .kicker{
+    color: var(--blue);
+    font-weight: 700;
+    letter-spacing: .2px;
+    font-size: 18px;
+    margin:0 0 4px;
+  }
+  h1{
+    margin:0;
+    font-size: 30px;
+    color: var(--blue-dark);
+    letter-spacing:.2px;
+  }
+  .hint{
+    margin: 10px 0 18px;
+    color: var(--muted);
+  }
+
+  /* Karte */
+  .card{
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 18px;
+    box-shadow: 0 10px 24px rgba(15, 23, 42, .06);
+  }
+
+  label{
+    display:block;
+    margin: 14px 0 7px;
+    font-weight: 650;
+    color: #223046;
+  }
+
+  input, textarea, button{
+    width:100%;
+    padding: 11px 12px;
+    font-size: 16px;
+    border-radius: 10px;
+  }
+
+  input, textarea{
+    border: 1px solid var(--line);
+    background: #fff;
+    outline: none;
+    transition: border-color .15s ease, box-shadow .15s ease;
+  }
+  input:focus, textarea:focus{
+    border-color: var(--blue);
+    box-shadow: 0 0 0 4px var(--focus);
+  }
+  textarea{ min-height: 100px; resize: vertical; }
+
+  .actions{
+    display:flex;
+    gap: 10px;
+    margin-top: 16px;
+  }
+
+  button{
+    border: 1px solid transparent;
+    cursor:pointer;
+    font-weight: 700;
+    transition: transform .04s ease, filter .15s ease, background .15s ease;
+  }
+  button:active{ transform: translateY(1px); }
+
+  /* Primär / Sekundär Buttons */
+  #btnSenden{
+    background: var(--card);
+    border-color: var(--line);
+    color: var(--blue-dark);
+  }
+  #btnSenden:hover{ filter: brightness(0.97); }
+
+  #btnNeu{
+    background: var(--card);
+    border-color: var(--line);
+    color: var(--blue-dark);
+  }
+  #btnNeu:hover{ filter: brightness(0.97); }
+
+    button:disabled{
+    opacity:.65;
+    cursor:not-allowed;
+  }
+
+  /* Unterstreich-Animation für Buttons */
+  .button-underline{
+    position: relative;
+    overflow: hidden;
+  }
+
+  .button-underline::after{
+    content: "";
+    position: absolute;
+    left: 50%;
+    bottom: 8px;               /* Abstand zum Text */
+    width: 0;
+    height: 2px;
+    background-color: var(--blue-dark);
+    transform: translateX(-50%);
+    transition: width 0.25s ease-out;
+  }
+
+  .button-underline:hover::after,
+  .button-underline:focus-visible::after{
+    width: 80%;
+  }
+
+  .box{
+    margin-top: 14px;
+    padding: 12px 14px;
+    border-radius: 12px;
+    border: 1px dashed var(--line);
+    background: #fbfdff;
+  }
+  .small{ font-size: 14px; color: var(--muted); }
+  .ok{ color: var(--ok); font-weight: 650; }
+  .err{ color: var(--err); font-weight: 650; }
+
+  .field-error{
+    border: 2px solid var(--err) !important;
+    box-shadow: 0 0 0 4px rgba(176,0,32,.12) !important;
+    outline: none;
+  }
+
+  /* Mobile: Buttons untereinander */
+  @media (max-width: 560px){
+    .site-header{ align-items:flex-start; }
+    .logo{ width: 96px; }
+    h1{ font-size: 26px; }
+    .actions{ flex-direction: column; }
+  }
+</style>
+</head>
+
+<body>
+<header class="site-header">
+  <img class="logo" src="logo_trans.png" alt="Stadttauben-Initiative Dresden e. V." />
+  <div class="brand">
+    <p class="kicker">Stadttauben-Initiative Dresden e. V.</p>
+    <h1>Neue Taube melden</h1>
+  </div>
+</header>
+
+<p class="hint">Nach dem Speichern wird die Tauben-ID angezeigt.</p>
+
+<div class="card">
+  <!-- Dein bestehendes <form> ... bis einschließlich .box kommt hier rein -->
+
+  <form id="meldungs-form">
+    <label for="name">Name der Taube *</label>
+    <input id="name" name="name" type="text" required />
+
+    <label for="fundort">Fundort *</label>
+    <input id="fundort" name="fundort" type="text" required placeholder="Stadtteil des Fundortes" />
+
+    <label for="funddatum">Funddatum *</label>
+    <input id="funddatum" name="funddatum" type="text" placeholder="tt.mm.jjjj" required />
+
+    <label for="pflegestelle">Pflegestelle (Name) *</label>
+    <input id="pflegestelle" name="pflegestelle" type="text" required placeholder="Vorname Nachname" autocomplete="off" />
+
+    <div class="actions">
+    <button id="btnSenden" type="submit" class="button-underline">Taube melden</button>
+    <button id="btnNeu" type="button" class="button-underline">Zurücksetzen</button>
+  </div>
+  </form>
+
+  <p id="meldung" class="small"></p>
+</div>
+
+<script>
+  // WICHTIG: Active Workflow => /webhook/...
+  const FORM_URL = "http://n8n-js48c8w4444s8k4owks8kwkk.88.198.140.127.sslip.io/webhook/Taubenmeldung";
+
+  const form = document.getElementById("meldungs-form");
+  const meldungEl = document.getElementById("meldung");
+  const btn = document.getElementById("btnSenden");
+
+  const fieldEls = {
+    name: document.getElementById("name"),
+    fundort: document.getElementById("fundort"),
+    funddatum: document.getElementById("funddatum"),
+    pflegestelle: document.getElementById("pflegestelle"),
+  };
+
+  function setMeldung(text, typ) {
+    meldungEl.className = "small " + (typ === "ok" ? "ok" : typ === "err" ? "err" : "");
+    meldungEl.textContent = text;
+  }
+
+  function clearErrors() {
+    Object.values(fieldEls).forEach(el => el.classList.remove("field-error"));
+  }
+
+  function markError(fieldName) {
+    clearErrors();
+    const el = fieldEls[fieldName];
+    if (el) el.classList.add("field-error");
+  }
+
+  // Beim Tippen Fehlerrahmen wieder entfernen
+  Object.values(fieldEls).forEach(el => el.addEventListener("input", clearErrors));
+
+  form.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    clearErrors();
+    btn.disabled = true;
+
+    try {
+      setMeldung("Sende …", "");
+
+      const formData = new FormData(form);
+      const res = await fetch(FORM_URL, { method: "POST", body: formData });
+
+      let data = null;
+      try {
+        data = await res.json();
+        // n8n liefert ein Array mit einem Item: [ { ok, taubenID, message } ]
+        if (Array.isArray(data)) {
+          data = data[0] || {};
+        }
+      } catch (e) {
+        const t = await res.text().catch(() => "");
+        setMeldung("Fehler: Antwort ist kein JSON. " + (t ? ("Antwort: " + t) : ("HTTP " + res.status)), "err");
+        btn.disabled = false;
+        return;
+      }
+
+      console.log("Antwort von n8n:", data);
+
+      // >>> WICHTIG: Fehlerfeld + Meldung auswerten (egal ob field, errorField oder errorfield)
+      if (data && data.ok === false) {
+        const feldName = data.errorField || data.field || data.errorfield;
+        if (feldName) markError(feldName);
+
+        const msg = data.errorMessage || data.message || "Eingabe ungültig.";
+        setMeldung(msg, "err");
+
+        btn.disabled = false;
+        return;
+      }
+
+      if (!res.ok) {
+        setMeldung("Fehler (HTTP " + res.status + ").", "err");
+        btn.disabled = false;
+        return;
+      }
+
+      const taubenId =
+        (data && (data.taubenId || data.tauben_id || data["Tauben ID"] || data.id || data.rowId)) || "";
+
+      if (data && data.message) {
+        setMeldung(data.message, "ok");
+      } else if (taubenId) {
+        setMeldung("Gespeichert. Tauben-ID: " + taubenId, "ok");
+      } else {
+        setMeldung("Gespeichert, aber keine Tauben-ID in der Antwort gefunden.", "err");
+      }
+
+      form.reset();
+
+    } catch (e) {
+      setMeldung("Technischer Fehler beim Senden. Bitte später erneut versuchen.", "err");
+      console.error(e);
+    } finally {
+      btn.disabled = false;
+    }
+  });
+
+  document.getElementById("btnNeu").addEventListener("click", () => {
+    clearErrors();
+    form.reset();
+    setMeldung("", "");   // keine Startmeldung mehr
+  });
+</script>
+
+</body>
+</html>
